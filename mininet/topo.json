@@ -1,0 +1,66 @@
+{
+  "switches": [
+    {
+      "name": "leaf1"
+    },
+    {
+      "name": "leaf2"
+    },
+    {
+      "name": "spine1"
+    },
+    {
+      "name": "spine2"
+    }
+  ],
+  "hosts": [
+    {
+      "name": "h1a",
+      "ipv6": "2001:1:1::a/64",
+      "mac": "00:00:00:00:00:1A",
+      "gateway": "2001:1:1::ff",
+      "switch": "leaf1"
+    },
+    {
+      "name": "h1b",
+      "ipv6": "2001:1:1::b/64",
+      "mac": "00:00:00:00:00:1B",
+      "gateway": "2001:1:1::ff",
+      "switch": "leaf1"
+    },
+    {
+      "name": "h1c",
+      "ipv6": "2001:1:1::c/64",
+      "mac": "00:00:00:00:00:1C",
+      "gateway": "2001:1:1::ff",
+      "switch": "leaf1"
+    },
+    {
+      "name": "h2",
+      "ipv6": "2001:1:2::2/64",
+      "mac": "00:00:00:00:00:20",
+      "gateway": "2001:1:2::ff",
+      "switch": "leaf1"
+    },
+    {
+      "name": "h3",
+      "ipv6": "2001:2:3::3/64",
+      "mac": "00:00:00:00:00:30",
+      "gateway": "2001:2:3::ff",
+      "switch": "leaf2"
+    },
+    {
+      "name": "h4",
+      "ipv6": "2001:2:4::4/64",
+      "mac": "00:00:00:00:00:40",
+      "gateway": "2001:2:4::ff",
+      "switch": "leaf2"
+    }
+  ],
+  "links": [
+    ["spine1", "leaf1"],
+    ["spine1", "leaf2"],
+    ["spine2", "leaf1"],
+    ["spine2", "leaf2"]
+  ]
+}
