@@ -1,0 +1,146 @@
+{
+    "hosts": {
+        "00:00:00:00:00:20/None": {
+            "basic": {
+                "name": "h2"
+            }
+        }, 
+        "00:00:00:00:00:30/None": {
+            "basic": {
+                "name": "h3"
+            }
+        }, 
+        "00:00:00:00:00:1A/None": {
+            "basic": {
+                "name": "h1a"
+            }
+        }, 
+        "00:00:00:00:00:1C/None": {
+            "basic": {
+                "name": "h1c"
+            }
+        }, 
+        "00:00:00:00:00:1B/None": {
+            "basic": {
+                "name": "h1b"
+            }
+        }, 
+        "00:00:00:00:00:40/None": {
+            "basic": {
+                "name": "h4"
+            }
+        }
+    }, 
+    "ports": {
+        "device:leaf1/3": {
+            "interfaces": [
+                {
+                    "ips": [
+                        "2001:1:1::ff/64"
+                    ], 
+                    "name": "leaf1-3"
+                }
+            ]
+        }, 
+        "device:leaf1/6": {
+            "interfaces": [
+                {
+                    "ips": [
+                        "2001:1:2::ff/64"
+                    ], 
+                    "name": "leaf1-6"
+                }
+            ]
+        }, 
+        "device:leaf1/4": {
+            "interfaces": [
+                {
+                    "ips": [
+                        "2001:1:1::ff/64"
+                    ], 
+                    "name": "leaf1-4"
+                }
+            ]
+        }, 
+        "device:leaf1/5": {
+            "interfaces": [
+                {
+                    "ips": [
+                        "2001:1:1::ff/64"
+                    ], 
+                    "name": "leaf1-5"
+                }
+            ]
+        }, 
+        "device:leaf2/4": {
+            "interfaces": [
+                {
+                    "ips": [
+                        "2001:2:4::ff/64"
+                    ], 
+                    "name": "leaf2-4"
+                }
+            ]
+        }, 
+        "device:leaf2/3": {
+            "interfaces": [
+                {
+                    "ips": [
+                        "2001:2:3::ff/64"
+                    ], 
+                    "name": "leaf2-3"
+                }
+            ]
+        }
+    }, 
+    "devices": {
+        "device:spine2": {
+            "fabricDeviceConfig": {
+                "isSpine": true, 
+                "mySid": "3:202:2::", 
+                "myStationMac": "00:bb:00:00:00:02"
+            }, 
+            "basic": {
+                "managementAddress": "grpc://mininet:50004?device_id=1", 
+                "driver": "stratum-bmv2", 
+                "pipeconf": "org.onosproject.ngsdn-tutorial"
+            }
+        }, 
+        "device:spine1": {
+            "fabricDeviceConfig": {
+                "isSpine": true, 
+                "mySid": "3:201:2::", 
+                "myStationMac": "00:bb:00:00:00:01"
+            }, 
+            "basic": {
+                "managementAddress": "grpc://mininet:50003?device_id=1", 
+                "driver": "stratum-bmv2", 
+                "pipeconf": "org.onosproject.ngsdn-tutorial"
+            }
+        }, 
+        "device:leaf1": {
+            "fabricDeviceConfig": {
+                "isSpine": false, 
+                "mySid": "3:101:2::", 
+                "myStationMac": "00:aa:00:00:00:01"
+            }, 
+            "basic": {
+                "managementAddress": "grpc://mininet:50001?device_id=1", 
+                "driver": "stratum-bmv2", 
+                "pipeconf": "org.onosproject.ngsdn-tutorial"
+            }
+        }, 
+        "device:leaf2": {
+            "fabricDeviceConfig": {
+                "isSpine": false, 
+                "mySid": "3:102:2::", 
+                "myStationMac": "00:aa:00:00:00:02"
+            }, 
+            "basic": {
+                "managementAddress": "grpc://mininet:50002?device_id=1", 
+                "driver": "stratum-bmv2", 
+                "pipeconf": "org.onosproject.ngsdn-tutorial"
+            }
+        }
+    }
+}

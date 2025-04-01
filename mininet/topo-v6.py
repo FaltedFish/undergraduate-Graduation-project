@@ -15,6 +15,7 @@
 #  limitations under the License.
 
 import argparse
+import json
 
 from mininet.cli import CLI
 from mininet.log import setLogLevel
@@ -22,6 +23,7 @@ from mininet.net import Mininet
 from mininet.node import Host
 from mininet.topo import Topo
 from stratum import StratumBmv2Switch
+from mininet.link import TCLink
 
 CPU_PORT = 255
 
@@ -56,50 +58,108 @@ class TutorialTopo(Topo):
 
     def __init__(self, *args, **kwargs):
         Topo.__init__(self, *args, **kwargs)
+        with open("/mininet/topo.json") as f:
+            topo_config = json.load(f)
 
-        # Leaves
-        # gRPC port 50001
-        leaf1 = self.addSwitch('leaf1', cls=StratumBmv2Switch, cpuport=CPU_PORT)
-        # gRPC port 50002
-        leaf2 = self.addSwitch('leaf2', cls=StratumBmv2Switch, cpuport=CPU_PORT)
+        netcfg = {
+            "devices":{},
+            "hosts":{},
+            "ports":{}
+        }
+        port_counters = {}
+        self._create_switches(topo_config['switches'],netcfg)
+        self._create_links(topo_config['links'],port_counters)
+        self._create_hosts(topo_config['hosts'],port_counters,netcfg)
+        with open("/mininet/netcfg1.json", "w") as f:
+            json.dump(netcfg, f, indent=4)
+        print(" netcfg1.json successfully created")
 
-        # Spines
-        # gRPC port 50003
-        spine1 = self.addSwitch('spine1', cls=StratumBmv2Switch, cpuport=CPU_PORT)
-        # gRPC port 50004
-        spine2 = self.addSwitch('spine2', cls=StratumBmv2Switch, cpuport=CPU_PORT)
 
-        # Switch Links
-        self.addLink(spine1, leaf1)
-        self.addLink(spine1, leaf2)
-        self.addLink(spine2, leaf1)
-        self.addLink(spine2, leaf2)
+    def _create_switches(self, switches,netcfg):
+        self.switch_map = {}
+        self.switch_isSpine_map = {}
+        leaf_counter = 1
+        spine_counter = 1
+        management_counter = 1
+        for sw in switches:
+            sw_name = sw["name"]
+            self.switch_isSpine_map[sw_name] = sw['isSpine']
 
-        # IPv6 hosts attached to leaf 1
-        h1a = self.addHost('h1a', cls=IPv6Host, mac="00:00:00:00:00:1A",
-                           ipv6='2001:1:1::a/64', ipv6_gw='2001:1:1::ff')
-        h1b = self.addHost('h1b', cls=IPv6Host, mac="00:00:00:00:00:1B",
-                           ipv6='2001:1:1::b/64', ipv6_gw='2001:1:1::ff')
-        h1c = self.addHost('h1c', cls=IPv6Host, mac="00:00:00:00:00:1C",
-                           ipv6='2001:1:1::c/64', ipv6_gw='2001:1:1::ff')
-        h2 = self.addHost('h2', cls=IPv6Host, mac="00:00:00:00:00:20",
-                          ipv6='2001:1:2::1/64', ipv6_gw='2001:1:2::ff')
-        self.addLink(h1a, leaf1)  # port 3
-        self.addLink(h1b, leaf1)  # port 4
-        self.addLink(h1c, leaf1)  # port 5
-        self.addLink(h2, leaf1)  # port 6
+            device_key = "device:{}".format(sw_name)
+            management_address = "grpc://mininet:500{:02d}?device_id=1".format(management_counter)
+            management_counter+=1
+            if sw.get("isSpine", False):
+                myStationMac = "00:bb:00:00:00:{:02d}".format(leaf_counter)
+                mySid = "3:20{}:2::".format(leaf_counter)
+                leaf_counter += 1
+            else:
+                myStationMac = "00:aa:00:00:00:{:02d}".format(spine_counter)
+                mySid = "3:10{}:2::".format(spine_counter)
+                spine_counter += 1
+            netcfg["devices"][device_key] = {
+                "basic": {
+                    "managementAddress": management_address,
+                    "driver": "stratum-bmv2",
+                    "pipeconf": "org.onosproject.ngsdn-tutorial"
+                },
+                "fabricDeviceConfig": {
+                    "myStationMac": myStationMac,
+                    "mySid": mySid,
+                    "isSpine": sw.get("isSpine", False)
+                }
+            }
+            self.switch_map[sw['name']] = self.addSwitch(
+                sw['name'],
+                cls=StratumBmv2Switch,
+                cpuport=CPU_PORT
+            )
 
-        # IPv6 hosts attached to leaf 2
-        h3 = self.addHost('h3', cls=IPv6Host, mac="00:00:00:00:00:30",
-                          ipv6='2001:2:3::1/64', ipv6_gw='2001:2:3::ff')
-        h4 = self.addHost('h4', cls=IPv6Host, mac="00:00:00:00:00:40",
-                          ipv6='2001:2:4::1/64', ipv6_gw='2001:2:4::ff')
-        self.addLink(h3, leaf2)  # port 3
-        self.addLink(h4, leaf2)  # port 4
+    def _create_hosts(self, hosts,port_counters,netcfg):
+        for host in hosts:
+            sw_name = host["switch"]
+            host_name = host["name"]
+            h = self.addHost(
+                host_name,
+                cls=IPv6Host,
+                ipv6=host['ipv6'],
+                ipv6_gw=host['gateway'],
+                mac=host['mac']
+            )
+            device_port_key = "device:{sw_name}/{port_num}".format(sw_name=sw_name,port_num=port_counters[sw_name])
+            interface_name = "{sw_name}-{port_num}".format(sw_name=sw_name,port_num=port_counters[sw_name])
+            port_counters[sw_name]+=1
+            gateway = host["gateway"]
+            if "/" not in gateway:
+                gateway += "/64"
+            netcfg["ports"][device_port_key] = {
+                "interfaces": [
+                    {
+                        "name": interface_name,
+                        "ips": [gateway]
+                    }
+                ]
+            }
+            host_key = "{host}/None".format(host=host['mac'])
+            netcfg["hosts"][host_key] = {
+                "basic": {
+                    "name": host["name"]
+                }
+            }
+            print(host_name, host['switch'],host['bw'])
+            self.addLink(h, self.switch_map[host['switch']],bw=host['bw'])
+
+    def _create_links(self, links,port_counters):
+        for link in links:
+            sw1, sw2,bw = link
+            port_counters[sw1] = port_counters.get(sw1,1)+1
+            port_counters[sw2] = port_counters.get(sw2,1)+1
+            print(sw1, sw2,bw)
+            self.addLink(self.switch_map[sw1], self.switch_map[sw2],bw=bw)
+
 
 
 def main():
-    net = Mininet(topo=TutorialTopo(), controller=None)
+    net = Mininet(topo=TutorialTopo(), controller=None, link=TCLink)
     net.start()
     CLI(net)
     net.stop()
