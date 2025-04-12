@@ -560,6 +560,7 @@ control IngressPipeImpl (inout parsed_headers_t    hdr,
         hdr.ipv6.next_hdr = IP_PROTO_SRV6;
     }
 
+
     /*
        Single segment header doesn't make sense given PSP
        i.e. we will pop the SRv6 header when segments_left reaches 0

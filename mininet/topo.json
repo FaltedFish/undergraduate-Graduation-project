@@ -1,78 +1,100 @@
 {
-  "switches": [
-    {
-      "name": "leaf1",
-      "isSpine": false,
-      "subnetIp": ["2001:1:1::ff/64","2001:1:2::ff/64"]
-    },
-    {
-      "name": "leaf2",
-      "isSpine": false,
-      "subnetIp": ["2001:2:3::ff/64","2001:2:4::ff/64"]
-    },
-    {
-      "name": "spine1",
-      "isSpine": true
-    },
-    {
-      "name": "spine2",
-      "isSpine": true
-    }
-  ],
-  "hosts": [
-    {
-      "name": "h1a",
-      "ipv6": "2001:1:1::a/64",
-      "mac": "00:00:00:00:00:1A",
-      "gateway": "2001:1:1::ff",
-      "switch": "leaf1",
-      "bw": 50
-    },
-    {
-      "name": "h1b",
-      "ipv6": "2001:1:1::b/64",
-      "mac": "00:00:00:00:00:1B",
-      "gateway": "2001:1:1::ff",
-      "switch": "leaf1",
-      "bw": 50
-    },
-    {
-      "name": "h1c",
-      "ipv6": "2001:1:1::c/64",
-      "mac": "00:00:00:00:00:1C",
-      "gateway": "2001:1:1::ff",
-      "switch": "leaf1",
-      "bw": 10
-    },
-    {
-      "name": "h2",
-      "ipv6": "2001:1:2::2/64",
-      "mac": "00:00:00:00:00:20",
-      "gateway": "2001:1:2::ff",
-      "switch": "leaf1",
-      "bw": 10
-    },
-    {
-      "name": "h3",
-      "ipv6": "2001:2:3::3/64",
-      "mac": "00:00:00:00:00:30",
-      "gateway": "2001:2:3::ff",
-      "switch": "leaf2",
-      "bw": 50
-    },
-    {
-      "name": "h4",
-      "ipv6": "2001:2:4::4/64",
-      "mac": "00:00:00:00:00:40",
-      "gateway": "2001:2:4::ff",
-      "switch": "leaf2",
-      "bw": 10
-    }
-  ],
-  "links": [
-    ["spine1", "leaf1",10],
-    ["spine1", "leaf2",10],
-    ["spine2", "leaf1",10],
-    ["spine2", "leaf2",10]
-  ]
+    "switches": [
+        {
+            "name": "leaf1",
+            "isSpine": false,
+            "subnetIp": [
+                "2001:1:1::ff/64",
+                "2001:1:2::ff/64"
+            ]
+        },
+        {
+            "name": "leaf2",
+            "isSpine": false,
+            "subnetIp": [
+                "2001:2:3::ff/64",
+                "2001:2:4::ff/64"
+            ]
+        },
+        {
+            "name": "spine1",
+            "isSpine": true
+        },
+        {
+            "name": "spine2",
+            "isSpine": true
+        }
+    ],
+    "hosts": [
+        {
+            "name": "h1a",
+            "ipv6": "2001:1:1::a/64",
+            "mac": "00:00:00:00:00:1A",
+            "gateway": "2001:1:1::ff",
+            "switch": "leaf1",
+            "bw": 50
+        },
+        {
+            "name": "h1b",
+            "ipv6": "2001:1:1::b/64",
+            "mac": "00:00:00:00:00:1B",
+            "gateway": "2001:1:1::ff",
+            "switch": "leaf1",
+            "bw": 50
+        },
+        {
+            "name": "h1c",
+            "ipv6": "2001:1:1::c/64",
+            "mac": "00:00:00:00:00:1C",
+            "gateway": "2001:1:1::ff",
+            "switch": "leaf1",
+            "bw": 10
+        },
+        {
+            "name": "h2",
+            "ipv6": "2001:1:2::2/64",
+            "mac": "00:00:00:00:00:20",
+            "gateway": "2001:1:2::ff",
+            "switch": "leaf1",
+            "bw": 10
+        },
+        {
+            "name": "h3",
+            "ipv6": "2001:2:3::3/64",
+            "mac": "00:00:00:00:00:30",
+            "gateway": "2001:2:3::ff",
+            "switch": "leaf2",
+            "bw": 50
+        },
+        {
+            "name": "h4",
+            "ipv6": "2001:2:4::4/64",
+            "mac": "00:00:00:00:00:40",
+            "gateway": "2001:2:4::ff",
+            "switch": "leaf2",
+            "bw": 10
+        }
+    ],
+    "links": [
+        [
+            "spine1",
+            "leaf1",
+            10
+        ],
+        [
+            "spine1",
+            "leaf2",
+            10
+        ],
+        [
+            "spine2",
+            "leaf1",
+            10
+        ],
+        [
+            "spine2",
+            "leaf2",
+            10
+        ]
+    ]
 }
